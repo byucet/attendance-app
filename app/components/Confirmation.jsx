@@ -7,7 +7,10 @@ export default function Confirmation() {
   useEffect(() => {
     if (typeof window === "undefined" || !window.localStorage) return;
 
-    const name = localStorage.getItem("firstName") || "Guest ";
+    const name =
+      localStorage.getItem("firstName") === "null"
+        ? "Guest"
+        : localStorage.getItem("firstName");
     setName(name);
   }, []);
 
