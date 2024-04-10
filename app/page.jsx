@@ -1,8 +1,10 @@
 import Link from "next/link";
+import prisma from "./lib/db";
 
 export default function Home() {
   return (
     <>
+      <h1 className="text-3xl font-bold">Welcome to our Event!</h1>
       <span className="text-teal-800">
         Click on your event sponsor to check in!
       </span>

@@ -1,14 +1,339 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
+}
+
+model Event {
+  eventID          Int       @id @default(autoincrement())
+  EventName        String?   @db.VarChar(50)
+  DateStart        DateTime? @db.DateTime(0)
+  DateEnd          DateTime? @db.DateTime(0)
+  EventType        String?   @db.VarChar(20)
+  recurringEventID Int?
+}
+
+model EventAttendance {
+  eventId      Int
+  personID     Int
+  TimeAttended DateTime @db.DateTime(0)
+  Notes        String?  @db.VarChar(500)
+
+  @@id([eventId, personID, TimeAttended])
+}
+
+model GrantHistory {
+  grantID     Int       @id @default(autoincrement())
+  teamId      Int
+  AwardAmount Int?
+  GrantType   String?   @db.VarChar(50)
+  DateAwarded DateTime? @db.DateTime(0)
+}
+
+model Major {
+  majorID   Int     @id @default(autoincrement())
+  MajorName String? @unique(map: "MajorName") @db.VarChar(130)
+}
+
+model Mentor {
+  personID    Int       @id
+  StartDate   DateTime? @db.Date
+  EndDate     DateTime? @db.Date
+  IsDonor     Boolean?  @db.Bit(1)
+  CompanyName String?   @db.VarChar(200)
+  Role        String?   @db.VarChar(100)
+  Notes       String?   @db.VarChar(500)
+}
+
+model MentorUpdate {
+  mentorUpdateID Int         @id @default(autoincrement())
+  TeamHealth     Int?
+  Notes          String?     @db.VarChar(500)
+  personID       Int?
+  teamID         Int?
+  TeamMentor     TeamMentor? @relation(fields: [personID, teamID], references: [personID, teamID], onDelete: NoAction, onUpdate: NoAction, map: "teamMentor_FK")
+
+  @@index([personID, teamID], map: "teamMentor_FK")
+}
+
+model Metric {
+  metricID    Int     @id @default(autoincrement())
+  MetricName  String? @db.VarChar(200)
+  Description String? @db.VarChar(500)
+}
+
+model OrgMembership {
+  orgID       Int
+  personID    Int
+  DateJoined  DateTime? @db.Date
+  DateExpired DateTime? @db.Date
+  isPaid      Boolean?  @db.Bit(1)
+
+  @@id([orgID, personID])
+}
+
+model OrgTeamMembership {
+  teamID     Int
+  orgID      Int
+  DateJoined DateTime? @db.Date
+  DateEnded  DateTime? @db.Date
+
+  @@id([teamID, orgID])
+}
+
+model Organization {
+  orgID       Int       @id @default(autoincrement())
+  orgName     String?   @db.VarChar(50)
+  DateFounded DateTime? @db.Date
+}
+
+model OrganizationEventLink {
+  orgID   Int
+  eventID Int
+
+  @@id([orgID, eventID])
+}
+
+model Person {
+  personID      Int      @id @default(autoincrement())
+  FirstName     String?  @db.VarChar(50)
+  LastName      String?  @db.VarChar(50)
+  City          String?  @db.VarChar(50)
+  State         String?  @db.Char(20)
+  Country       String?  @db.Char(10)
+  Phone         String?  @db.VarChar(14)
+  Email         String?  @db.VarChar(100)
+  LinkedInURL   String?  @db.VarChar(200)
+  netid         String?  @unique @db.VarChar(20)
+  NeedsUpdate   Boolean?
+  PreferredName String?  @db.VarChar(25)
+  Student       Student?
+}
+
+model RecurringEvent {
+  recurringEventID Int     @id @default(autoincrement())
+  eventName        String? @db.VarChar(100)
+  eventDescription String? @db.VarChar(150)
+}
+
+model Student {
+  personID         Int      @id
+  NetID            String?  @unique(map: "NetID") @db.VarChar(20)
+  ByuID            Int?     @unique(map: "ByuID")
+  ClassStanding    String?  @db.VarChar(20)
+  Ethnicity        String?  @db.VarChar(50)
+  College          String?  @db.VarChar(150)
+  GraduationYear   Int?
+  Gender           String?  @db.VarChar(1)
+  NeedsUpdate      Boolean? @db.Bit(1)
+  Major            String?  @db.VarChar(255)
+  ExpectedGradYear Int?
+  Person           Person   @relation(fields: [personID], references: [personID], onDelete: NoAction, onUpdate: NoAction, map: "Student_ibfk_1")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model StudentMajorsHistory {
+  majorID   Int
+  personID  Int
+  DateStart DateTime? @db.Date
+  DateEnd   DateTime? @db.Date
+
+  @@ignore
+}
+
+model TeamEventAttendance {
+  eventId      Int
+  teamID       Int
+  TimeAttended DateTime? @db.DateTime(0)
+
+  @@id([eventId, teamID])
+}
+
+model TeamMembership {
+  personID   Int
+  teamID     Int
+  DateJoined DateTime? @db.DateTime(0)
+  DateLeft   DateTime? @db.DateTime(0)
+  Role       String?   @db.VarChar(100)
+  CoFounder  Boolean?  @db.Bit(1)
+  Notes      String?   @db.VarChar(300)
+  id         Int?
+
+  @@id([personID, teamID])
+}
+
+model TeamMentor {
+  personID     Int
+  teamID       Int
+  StartDate    DateTime?      @db.Date
+  EndDate      DateTime?      @db.Date
+  MentorUpdate MentorUpdate[]
+
+  @@id([personID, teamID])
+}
+
+model TeamUpdate {
+  updateID      Int        @id @default(autoincrement())
+  teamID        Int
+  UpdateDate    DateTime?  @db.DateTime(0)
+  MetWithMentor Boolean?   @db.Bit(1)
+  MentorNotes   String?    @db.VarChar(500)
+  metricID      Int?
+  metricValue   String?    @db.VarChar(100)
+  metricNotes   String?    @db.VarChar(1000)
+  Notes         String?    @db.VarChar(500)
+  submitter_id  Int?
+  created_by    String?    @db.VarChar(20)
+  auth_user     auth_user? @relation(fields: [submitter_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "TeamUpdate_submitter_id_6425d1c5_fk_auth_user_id")
+
+  @@index([submitter_id], map: "TeamUpdate_submitter_id_6425d1c5_fk_auth_user_id")
+}
+
+model UpdateTopic {
+  topicID     Int     @id @default(autoincrement())
+  topicName   String? @db.VarChar(100)
+  Description String? @db.VarChar(2000)
+}
+
+model UpdateTopicData {
+  topicID  Int
+  updateID Int
+  Response String? @db.VarChar(300)
+
+  @@id([topicID, updateID])
+}
+
+model auth_group {
+  id                     Int                      @id @default(autoincrement())
+  name                   String                   @unique(map: "name") @db.VarChar(150)
+  auth_group_permissions auth_group_permissions[]
+  auth_user_groups       auth_user_groups[]
+}
+
+model auth_group_permissions {
+  id              BigInt          @id @default(autoincrement())
+  group_id        Int
+  permission_id   Int
+  auth_permission auth_permission @relation(fields: [permission_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "auth_group_permissio_permission_id_84c5c92e_fk_auth_perm")
+  auth_group      auth_group      @relation(fields: [group_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "auth_group_permissions_group_id_b120cbf9_fk_auth_group_id")
+
+  @@unique([group_id, permission_id], map: "auth_group_permissions_group_id_permission_id_0cd325b0_uniq")
+  @@index([permission_id], map: "auth_group_permissio_permission_id_84c5c92e_fk_auth_perm")
+}
+
+model auth_permission {
+  id                         Int                          @id @default(autoincrement())
+  name                       String                       @db.VarChar(255)
+  content_type_id            Int
+  codename                   String                       @db.VarChar(100)
+  auth_group_permissions     auth_group_permissions[]
+  django_content_type        django_content_type          @relation(fields: [content_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "auth_permission_content_type_id_2f476e4b_fk_django_co")
+  auth_user_user_permissions auth_user_user_permissions[]
+
+  @@unique([content_type_id, codename], map: "auth_permission_content_type_id_codename_01ab375a_uniq")
+}
+
+model auth_user {
+  id                         Int                          @id @default(autoincrement())
+  password                   String                       @db.VarChar(128)
+  last_login                 DateTime?                    @db.DateTime(6)
+  is_superuser               Boolean
+  username                   String                       @unique(map: "username") @db.VarChar(150)
+  first_name                 String                       @db.VarChar(150)
+  last_name                  String                       @db.VarChar(150)
+  email                      String                       @db.VarChar(254)
+  is_staff                   Boolean
+  is_active                  Boolean
+  date_joined                DateTime                     @db.DateTime(6)
+  TeamUpdate                 TeamUpdate[]
+  auth_user_groups           auth_user_groups[]
+  auth_user_user_permissions auth_user_user_permissions[]
+  django_admin_log           django_admin_log[]
+}
+
+model auth_user_groups {
+  id         BigInt     @id @default(autoincrement())
+  user_id    Int
+  group_id   Int
+  auth_group auth_group @relation(fields: [group_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "auth_user_groups_group_id_97559544_fk_auth_group_id")
+  auth_user  auth_user  @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "auth_user_groups_user_id_6a12ed8b_fk_auth_user_id")
+
+  @@unique([user_id, group_id], map: "auth_user_groups_user_id_group_id_94350c0c_uniq")
+  @@index([group_id], map: "auth_user_groups_group_id_97559544_fk_auth_group_id")
+}
+
+model auth_user_user_permissions {
+  id              BigInt          @id @default(autoincrement())
+  user_id         Int
+  permission_id   Int
+  auth_permission auth_permission @relation(fields: [permission_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "auth_user_user_permi_permission_id_1fbb5f2c_fk_auth_perm")
+  auth_user       auth_user       @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "auth_user_user_permissions_user_id_a95ead1b_fk_auth_user_id")
+
+  @@unique([user_id, permission_id], map: "auth_user_user_permissions_user_id_permission_id_14a6b632_uniq")
+  @@index([permission_id], map: "auth_user_user_permi_permission_id_1fbb5f2c_fk_auth_perm")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model django_admin_log {
+  id                  Int                  @id @default(autoincrement())
+  action_time         DateTime             @db.DateTime(6)
+  object_id           String?              @db.LongText
+  object_repr         String               @db.VarChar(200)
+  action_flag         Int                  @db.UnsignedSmallInt
+  change_message      String               @db.LongText
+  content_type_id     Int?
+  user_id             Int
+  django_content_type django_content_type? @relation(fields: [content_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "django_admin_log_content_type_id_c4bce8eb_fk_django_co")
+  auth_user           auth_user            @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "django_admin_log_user_id_c564eba6_fk_auth_user_id")
+
+  @@index([content_type_id], map: "django_admin_log_content_type_id_c4bce8eb_fk_django_co")
+  @@index([user_id], map: "django_admin_log_user_id_c564eba6_fk_auth_user_id")
+}
+
+model django_content_type {
+  id               Int                @id @default(autoincrement())
+  app_label        String             @db.VarChar(100)
+  model            String             @db.VarChar(100)
+  auth_permission  auth_permission[]
+  django_admin_log django_admin_log[]
+
+  @@unique([app_label, model], map: "django_content_type_app_label_model_76bd3d3b_uniq")
+}
+
+model django_migrations {
+  id      BigInt   @id @default(autoincrement())
+  app     String   @db.VarChar(255)
+  name    String   @db.VarChar(255)
+  applied DateTime @db.DateTime(6)
+}
+
+model django_session {
+  session_key  String   @id @db.VarChar(40)
+  session_data String   @db.LongText
+  expire_date  DateTime @db.DateTime(6)
+
+  @@index([expire_date], map: "django_session_expire_date_a5c62663")
+}
+
+model team {
+  teamID          Int       @id @default(autoincrement())
+  TeamName        String?   @db.VarChar(200)
+  CompanyCategory String?   @db.VarChar(100)
+  CompanyIndustry String?   @db.VarChar(100)
+  Model           String?   @db.VarChar(20)
+  WebsiteURL      String?   @db.VarChar(300)
+  DateFounded     DateTime? @db.DateTime(0)
+  DateEnded       DateTime? @db.DateTime(0)
+  Description     String?   @db.VarChar(400)
+  IsPublic        Boolean?  @db.Bit(1)
+  Stage           String?   @db.VarChar(100)
+  CurrentMetricID Int?
+  LinkedInURL     String?   @db.VarChar(500)
+  Logo            String?   @db.VarChar(255)
+  created_by      String    @db.VarChar(20)
+  created_at      DateTime  @default(now()) @db.DateTime(0)
+  updated_at      DateTime? @db.DateTime(0)
 }
