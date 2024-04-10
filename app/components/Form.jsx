@@ -7,7 +7,17 @@ export default function Form({ orgID, orgName }) {
   const router = useRouter();
 
   async function handleSubmit() {
+    console.log("in submite");
     netidRef.current = document.getElementById("netid").value;
+    console.log(netidRef.current);
+    const response = await fetch(`/api/user/${netidRef.current}`, {
+      method: "GET",
+    });
+    if (response.ok) {
+      console.log("User found!");
+    } else {
+      console.log("User not found!");
+    }
   }
 
   return (
@@ -29,7 +39,10 @@ export default function Form({ orgID, orgName }) {
           autoCorrect="off"
         />
 
-        <button className="button bg-teal-700 w-1/3 text-white py-3 px-4 rounded-3xl">
+        <button
+          className="button bg-teal-700 w-1/3 text-white py-3 px-4 rounded-3xl"
+          onClick={handleSubmit}
+        >
           Submit
         </button>
 
