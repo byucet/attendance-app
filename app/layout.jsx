@@ -1,0 +1,17 @@
+import { Inter } from "next/font/google";
+import "./globals.css";
+
+const inter = Inter({ subsets: ["latin"] });
+
+export default function RootLayout({ children }) {
+  return (
+    <html lang="en">
+      <body className={inter.className}>
+        <div className="flex flex-col justify-center items-center p-10">
+          <h1 className="text-3xl font-bold">Welcome to our Event!</h1>
+          {children}
+        </div>
+      </body>
+    </html>
+  );
+}
