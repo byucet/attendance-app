@@ -1,5 +1,5 @@
 "use client";
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
@@ -7,9 +7,20 @@ export default function Form({ orgID, orgName }) {
   const netidRef = useRef(null);
   const router = useRouter();
 
+  useEffect(() => {
+    // check if user is already in local storage
+    const firstName = localStorage.getItem("firstName");
+    const netid = localStorage.getItem("netid");
+    const personID = localStorage.getItem("personID");
+
+    if (firstName && netid && personID) {
+      netidRef.current.value = netid;
+      handleSubmit();
+    }
+  });
+
   async function handleSubmit(event) {
-    event.preventDefault();
-    console.log("in submit");
+    if (event) event.preventDefault();
     const netid = netidRef.current.value;
 
     try {
