@@ -10,7 +10,7 @@ export default function Home() {
       </span>
       <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <Link
-          href={`/program/1`}
+          href={`/program/9`}
           className="bg-teal-800 text-white px-4 py-3 rounded-md"
         >
           The Slab
@@ -23,7 +23,7 @@ export default function Home() {
           Creators
         </Link>
         <Link
-          href={`program/3`}
+          href={`program/7`}
           className="bg-teal-600 text-white px-4 py-3 rounded-md"
         >
           Women in Entrepreneurship
@@ -35,10 +35,22 @@ export default function Home() {
           Seed
         </Link>
         <Link
+          href={`program/6`}
+          className="bg-yellow-800 text-white px-4 py-3 rounded-md"
+        >
+          Entrepreneurship Association
+        </Link>
+        <Link
           href={`program/5`}
+          className="bg-yellow-600 text-white px-4 py-3 rounded-md"
+        >
+          Seed Launchpad
+        </Link>
+        <Link
+          href={`program/8`}
           className="bg-yellow-500 text-white px-4 py-3 rounded-md"
         >
-          Launchpad
+          Graduate Entrepreneurship Association
         </Link>
       </div>
     </>
