@@ -1,7 +1,14 @@
 "use client";
+import { useRef } from "react";
+import { useRouter } from "next/navigation";
 
-export default function Form(program) {
-  const { orgID, orgName } = program;
+export default function Form({ orgID, orgName }) {
+  const netidRef = useRef(null);
+  const router = useRouter();
+
+  async function handleSubmit() {
+    netidRef.current = document.getElementById("netid").value;
+  }
 
   return (
     <>
