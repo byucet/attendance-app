@@ -50,7 +50,6 @@ export default function Form({ orgID, orgName }) {
       }
       // if user is not in database, redirect to signup
       else {
-        console.log("User not found!");
         setWarning(true);
       }
     } catch (error) {

@@ -1,7 +1,7 @@
 -- CreateTable
 CREATE TABLE `Event` (
     `eventID` INTEGER NOT NULL AUTO_INCREMENT,
-    `EventName` VARCHAR(50) NULL,
+    `EventName` VARCHAR(100) NULL,
     `DateStart` DATETIME(0) NULL,
     `DateEnd` DATETIME(0) NULL,
     `EventType` VARCHAR(20) NULL,
@@ -117,15 +117,16 @@ CREATE TABLE `Person` (
     `personID` INTEGER NOT NULL AUTO_INCREMENT,
     `FirstName` VARCHAR(50) NULL,
     `LastName` VARCHAR(50) NULL,
+    `PreferredName` VARCHAR(255) NULL,
+    `NetID` VARCHAR(20) NULL,
+    `Gender` VARCHAR(32) NULL,
+    `Email` VARCHAR(100) NULL,
+    `Phone` VARCHAR(14) NULL,
+    `Ethnicity` VARCHAR(255) NULL,
     `City` VARCHAR(50) NULL,
     `State` CHAR(20) NULL,
     `Country` CHAR(10) NULL,
-    `Phone` VARCHAR(14) NULL,
-    `Email` VARCHAR(100) NULL,
     `LinkedInURL` VARCHAR(200) NULL,
-    `netid` VARCHAR(20) NULL,
-    `NeedsUpdate` BOOLEAN NULL,
-    `PreferredName` VARCHAR(25) NULL,
 
     PRIMARY KEY (`personID`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -143,18 +144,17 @@ CREATE TABLE `RecurringEvent` (
 CREATE TABLE `Student` (
     `personID` INTEGER NOT NULL,
     `NetID` VARCHAR(20) NULL,
-    `ByuID` INTEGER NULL,
+    `UniversityID` INTEGER NULL,
     `ClassStanding` VARCHAR(20) NULL,
-    `Ethnicity` VARCHAR(50) NULL,
     `College` VARCHAR(150) NULL,
     `GraduationYear` INTEGER NULL,
-    `Gender` VARCHAR(1) NULL,
-    `NeedsUpdate` BIT(1) NULL,
     `Major` VARCHAR(255) NULL,
     `ExpectedGradYear` INTEGER NULL,
+    `EventTerm` VARCHAR(255) NULL,
+    `UniversityEmail` VARCHAR(255) NULL,
 
     UNIQUE INDEX `NetID`(`NetID`),
-    UNIQUE INDEX `ByuID`(`ByuID`),
+    UNIQUE INDEX `ByuID`(`UniversityID`),
     PRIMARY KEY (`personID`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -375,6 +375,61 @@ CREATE TABLE `team` (
     PRIMARY KEY (`teamID`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
+-- CreateTable
+CREATE TABLE `temp_grant` (
+    `ContactName` VARCHAR(150) NULL,
+    `ContactEmail` VARCHAR(100) NULL,
+    `CompanyName` VARCHAR(255) NULL,
+    `ContactPhone` VARCHAR(14) NULL,
+    `ApprovalAmount` DECIMAL(10, 2) NULL,
+    `GrantDate` DATE NULL,
+    `grantID` INTEGER NOT NULL AUTO_INCREMENT,
+    `teamId` INTEGER NULL DEFAULT 0,
+    `contactId` INTEGER NULL,
+    `ContactFirstName` VARCHAR(255) NULL,
+    `ContactLastName` VARCHAR(255) NULL,
+
+    INDEX `fk_contactId`(`contactId`),
+    PRIMARY KEY (`grantID`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `temp_person` (
+    `personID` INTEGER NOT NULL AUTO_INCREMENT,
+    `FirstName` VARCHAR(50) NULL,
+    `LastName` VARCHAR(50) NULL,
+    `PreferredName` VARCHAR(255) NULL,
+    `NetID` VARCHAR(20) NULL,
+    `Gender` VARCHAR(32) NULL,
+    `Email` VARCHAR(100) NULL,
+    `Phone` VARCHAR(14) NULL,
+    `Ethnicity` VARCHAR(255) NULL,
+    `City` VARCHAR(50) NULL,
+    `State` CHAR(20) NULL,
+    `Country` CHAR(10) NULL,
+    `LinkedInURL` VARCHAR(200) NULL,
+
+    PRIMARY KEY (`personID`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `temp_student` (
+    `personID` INTEGER NOT NULL,
+    `NetID` VARCHAR(20) NULL,
+    `UniversityID` INTEGER NULL,
+    `ClassStanding` VARCHAR(20) NULL,
+    `College` VARCHAR(150) NULL,
+    `GraduationYear` INTEGER NULL,
+    `Major` VARCHAR(255) NULL,
+    `ExpectedGradYear` INTEGER NULL,
+    `EventTerm` VARCHAR(255) NULL,
+    `UniversityEmail` VARCHAR(255) NULL,
+
+    UNIQUE INDEX `NetID`(`NetID`),
+    UNIQUE INDEX `ByuID`(`UniversityID`),
+    PRIMARY KEY (`personID`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
 -- AddForeignKey
 ALTER TABLE `MentorUpdate` ADD CONSTRAINT `teamMentor_FK` FOREIGN KEY (`personID`, `teamID`) REFERENCES `TeamMentor`(`personID`, `teamID`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
@@ -410,4 +465,7 @@ ALTER TABLE `django_admin_log` ADD CONSTRAINT `django_admin_log_content_type_id_
 
 -- AddForeignKey
 ALTER TABLE `django_admin_log` ADD CONSTRAINT `django_admin_log_user_id_c564eba6_fk_auth_user_id` FOREIGN KEY (`user_id`) REFERENCES `auth_user`(`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- AddForeignKey
+ALTER TABLE `temp_grant` ADD CONSTRAINT `fk_contactId` FOREIGN KEY (`contactId`) REFERENCES `Person`(`personID`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 

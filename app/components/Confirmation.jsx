@@ -14,6 +14,13 @@ export default function Confirmation() {
     setName(name);
   }, []);
 
+  const closeWindow = () => {
+    window.opener = null;
+
+    window.open("about:blank", "_self");
+    window.close();
+  };
+
   return (
     <>
       <div className="h-full flex flex-col justify-center">
@@ -35,6 +42,12 @@ export default function Confirmation() {
           </Link>{" "}
           to correct the entry
         </p>
+        <button
+          className="bg-black text-white py-2 px-4 rounded-3xl my-4"
+          onClick={closeWindow}
+        >
+          Close window
+        </button>
       </div>
     </>
   );

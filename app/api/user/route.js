@@ -17,14 +17,14 @@ export async function POST(request) {
       firstName: res.firstName,
       lastName: res.lastName,
       netid: res.netid,
-      orgID: Number(res.orgID) * 100,
+      orgID: Number(res.orgID),
     };
 
     const person = await prisma.person.create({
       data: {
         FirstName: data.firstName,
         LastName: data.lastName,
-        netid: data.netid,
+        NetID: data.netid,
       },
     });
 
