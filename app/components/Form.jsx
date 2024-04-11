@@ -1,11 +1,12 @@
 "use client";
-import { useRef, useEffect } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 export default function Form({ orgID, orgName }) {
   const netidRef = useRef(null);
   const router = useRouter();
+  const [warning, setWarning] = useState(false);
 
   useEffect(() => {
     // check if user is already in local storage
@@ -51,7 +52,7 @@ export default function Form({ orgID, orgName }) {
       // if user is not in database, redirect to signup
       else {
         console.log("User not found!");
-        router.push("/program/confirmation/new");
+        setWarning(true);
       }
     } catch (error) {
       console.error("Error occurred:", error);
@@ -62,9 +63,17 @@ export default function Form({ orgID, orgName }) {
     <>
       <div className="h-full flex flex-col justify-center items-center">
         <h1 className="text-3xl font-bold">{orgName} Event!</h1>
-        <div className="text-info my-4">
-          Thanks for joining us! Please enter your information below.
-        </div>
+        {!warning ? (
+          <div className="text-info my-4">
+            Thanks for joining us! Please enter your information below.
+          </div>
+        ) : (
+          <div id="netid-warning" className="text-error text-red-500 my-4">
+            Looks like your netid isn&apos;t in our system yet. Check your
+            spelling, or if this is your first event with us, click register
+            below.
+          </div>
+        )}
         <div id="box" className="flex flex-col w-full md:w-2/3">
           <div id="netid-message" className=""></div>
           <form onSubmit={handleSubmit}>
