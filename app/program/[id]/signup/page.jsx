@@ -3,7 +3,6 @@ import Link from "next/link";
 
 export default function Page({ params }) {
   const orgID = params.id;
-  console.log(orgID);
 
   const handleSubmit = () => {};
 
@@ -13,7 +12,7 @@ export default function Page({ params }) {
       <div className="text-info my-4">
         Thanks for joining us! Please enter your information below.
       </div>
-      <div id="box" className="flex flex-col w-2/3">
+      <div id="box" className="flex flex-col w-full md:w-2/3">
         <div id="netid-message" className=""></div>
         <form onSubmit={handleSubmit}>
           <label htmlFor="first-name" className="block mb-2">

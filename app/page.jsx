@@ -4,11 +4,11 @@ import prisma from "./lib/db";
 export default function Home() {
   return (
     <>
-      <h1 className="text-3xl font-bold">Welcome to our Event!</h1>
-      <span className="text-teal-800">
+      <h1 className="text-3xl font-bold w-2/3">Welcome to our Event!</h1>
+      <span className="text-slate-700 py-2 w-2/3">
         Click on your event sponsor to check in!
       </span>
-      <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="mt-4 w-2/3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <Link
           href={`/program/9`}
           className="bg-teal-900 text-white px-4 py-3 rounded-md"
