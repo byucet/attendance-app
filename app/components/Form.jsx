@@ -68,7 +68,10 @@ export default function Form({ orgID, orgName }) {
             Thanks for joining us! Please enter your information below.
           </div>
         ) : (
-          <div id="netid-warning" className="text-error text-red-500 my-4">
+          <div
+            id="netid-warning"
+            className="text-error md:w-2/3 text-red-500 my-4"
+          >
             Looks like your netid isn&apos;t in our system yet. Check your
             spelling, or if this is your first event with us, click register
             below.
@@ -92,10 +95,16 @@ export default function Form({ orgID, orgName }) {
             />
             <button
               type="submit"
-              className="button bg-teal-700 w-1/3 text-white py-3 px-4 rounded-3xl"
+              className="button my-2 block bg-teal-700 w-1/3 text-white py-3 px-4 rounded-3xl"
             >
               Submit
             </button>
+            <Link
+              href="/"
+              className="button my-2 block text-center bg-gray-400 w-1/3 text-white py-3 px-4 rounded-3xl"
+            >
+              Change Event
+            </Link>
           </form>
 
           <div className="text-info mt-4">

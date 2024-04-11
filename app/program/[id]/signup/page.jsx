@@ -80,7 +80,7 @@ export default function Page({ params }) {
             <input
               id="first-name"
               type="text"
-              placeholder="eg. aeisntein123"
+              placeholder="eg. aeinstein123"
               pattern="^[a-zA-Z][a-zA-Z0-9]*$"
               className="w-full border border-gray-300 rounded-3xl py-3 px-4 mb-4"
               required
