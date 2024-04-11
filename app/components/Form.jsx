@@ -60,43 +60,45 @@ export default function Form({ orgID, orgName }) {
 
   return (
     <>
-      <h1 className="text-3xl font-bold">{orgName} Event!</h1>
-      <div className="text-info my-4">
-        Thanks for joining us! Please enter your information below.
-      </div>
-      <div id="box" className="flex flex-col w-full md:w-2/3">
-        <div id="netid-message" className=""></div>
-        <form onSubmit={handleSubmit}>
-          <label htmlFor="netid" className="block mb-2">
-            Net ID:
-          </label>
-          <input
-            id="netid"
-            type="text"
-            placeholder="eg. aeinstein123"
-            pattern="^[a-zA-Z][a-zA-Z0-9]*$"
-            className="w-full border border-gray-300 rounded-3xl py-3 px-4 mb-4"
-            autoCorrect="off"
-            required
-            ref={netidRef}
-          />
-          <button
-            type="submit"
-            className="button bg-teal-700 w-1/3 text-white py-3 px-4 rounded-3xl"
-          >
-            Submit
-          </button>
-        </form>
+      <div className="h-full flex flex-col justify-center items-center">
+        <h1 className="text-3xl font-bold">{orgName} Event!</h1>
+        <div className="text-info my-4">
+          Thanks for joining us! Please enter your information below.
+        </div>
+        <div id="box" className="flex flex-col w-full md:w-2/3">
+          <div id="netid-message" className=""></div>
+          <form onSubmit={handleSubmit}>
+            <label htmlFor="netid" className="block mb-2">
+              Net ID:
+            </label>
+            <input
+              id="netid"
+              type="text"
+              placeholder="eg. aeinstein123"
+              pattern="^[a-zA-Z][a-zA-Z0-9]*$"
+              className="w-full border border-gray-300 rounded-3xl py-3 px-4 mb-4"
+              autoCorrect="off"
+              required
+              ref={netidRef}
+            />
+            <button
+              type="submit"
+              className="button bg-teal-700 w-1/3 text-white py-3 px-4 rounded-3xl"
+            >
+              Submit
+            </button>
+          </form>
 
-        <div className="text-info mt-4">
-          First time attending a Rollins Center event?{" "}
-          <Link
-            className="text-teal-500 cursor-pointer"
-            href={`/program/${orgID}/signup`}
-          >
-            Register
-          </Link>{" "}
-          to continue!
+          <div className="text-info mt-4">
+            First time attending a Rollins Center event?{" "}
+            <Link
+              className="text-teal-500 cursor-pointer"
+              href={`/program/${orgID}/signup`}
+            >
+              Register
+            </Link>{" "}
+            to continue!
+          </div>
         </div>
       </div>
     </>
