@@ -10,7 +10,7 @@ export async function POST(request) {
       firstName: res.FirstName,
       personID: res.personID,
       NetID: res.netid,
-      orgID: Number(res.orgID),
+      orgID: Number(res.orgID) * 100,
     };
 
     const timeAttended = new Date();

@@ -17,7 +17,7 @@ export async function POST(request) {
       firstName: res.firstName,
       lastName: res.lastName,
       netid: res.netid,
-      orgID: Number(res.orgID),
+      orgID: Number(res.orgID) * 100,
     };
 
     const person = await prisma.person.create({
