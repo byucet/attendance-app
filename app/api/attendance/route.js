@@ -10,7 +10,21 @@ export async function POST(request) {
       firstName: res.FirstName,
       personID: res.personID,
       netid: res.netid,
+      orgID: Number(res.orgID) * 100,
     };
+
+    const timeAttended = new Date();
+
+    console.log(data);
+    // const attendance = await prisma.eventAttendance.create({
+    //   data: {
+    //     eventId: data.orgID,
+    //     personID: data.personID,
+    //     TimeAttended: timeAttended,
+    //   },
+    // });
+
+    // console.log(attendance);
 
     return NextResponse.json({ data, message: "Success" }, { status: 200 });
   } catch (error) {

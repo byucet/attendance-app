@@ -5,6 +5,7 @@ generator client {
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
 model Event {
@@ -14,6 +15,7 @@ model Event {
   DateEnd          DateTime? @db.DateTime(0)
   EventType        String?   @db.VarChar(20)
   recurringEventID Int?
+  EventAttendance EventAttendance[]
 }
 
 model EventAttendance {
@@ -21,6 +23,8 @@ model EventAttendance {
   personID     Int
   TimeAttended DateTime @db.DateTime(0)
   Notes        String?  @db.VarChar(500)
+  Event   Event   @relation(fields: [eventId], references: [eventID])
+  Person  Person  @relation(fields: [personID], references: [personID])
 
   @@id([eventId, personID, TimeAttended])
 }
@@ -111,6 +115,7 @@ model Person {
   NeedsUpdate   Boolean?
   PreferredName String?  @db.VarChar(25)
   Student       Student?
+  EventAttendance EventAttendance[]
 }
 
 model RecurringEvent {

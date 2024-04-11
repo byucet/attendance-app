@@ -41,7 +41,6 @@ export default function Form({ orgID, orgName }) {
         })
           .then((response) => response.json())
           .then((data) => {
-            console.log(data);
             localStorage.setItem("firstName", data.data.firstName);
             localStorage.setItem("netid", data.data.netid);
             localStorage.setItem("personID", data.data.personID);
