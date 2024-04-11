@@ -42,7 +42,7 @@ export default function Form({ orgID, orgName }) {
           .then((response) => response.json())
           .then((data) => {
             localStorage.setItem("firstName", data.data.firstName);
-            localStorage.setItem("netid", data.data.netid);
+            localStorage.setItem("netid", data.data.NetID);
             localStorage.setItem("personID", data.data.personID);
           });
 

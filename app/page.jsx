@@ -11,44 +11,44 @@ export default function Home() {
         </span>
         <div className="mt-4 w-2/3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <Link
-            href={`/program/100`}
+            href={`/program/10`}
             className="bg-teal-900 text-white px-4 py-3 rounded-md"
           >
             The Slab
           </Link>
 
           <Link
-            href={`program/200`}
+            href={`program/2`}
             className="bg-teal-800 text-white px-4 py-3 rounded-md"
           >
             Creators
           </Link>
           <Link
-            href={`program/700`}
+            href={`program/7`}
             className="bg-teal-700 text-white px-4 py-3 rounded-md"
           >
             Women in Entrepreneurship
           </Link>
           <Link
-            href={`program/400`}
+            href={`program/4`}
             className="bg-teal-600 text-white px-4 py-3 rounded-md"
           >
             Seed
           </Link>
           <Link
-            href={`program/600`}
+            href={`program/6`}
             className="bg-slate-600 text-white px-4 py-3 rounded-md"
           >
             Entrepreneurship Association
           </Link>
           <Link
-            href={`program/500`}
+            href={`program/5`}
             className="bg-slate-500 text-white px-4 py-3 rounded-md"
           >
             Seed Launchpad
           </Link>
           <Link
-            href={`program/800`}
+            href={`program/8`}
             className="bg-slate-400 text-white px-4 py-3 rounded-md"
           >
             Graduate Entrepreneurship Association
