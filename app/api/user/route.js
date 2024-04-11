@@ -17,7 +17,7 @@ export async function POST(request) {
       firstName: res.firstName,
       lastName: res.lastName,
       netid: res.netid,
-      orgID: res.orgID,
+      orgID: Number(res.orgID) * 100,
     };
 
     const person = await prisma.person.create({
@@ -37,14 +37,14 @@ export async function POST(request) {
 
     console.log("Student created:", student);
 
-    // const attendance = await prisma.EventAttendance.create({
-    //   data: {
-    //     eventId: Number(data.orgID),
-    //     personID: person.personID,
-    //     TimeAttended: jsDate,
-    //   },
-    // });
-    // console.log("Attendance created:", attendance);
+    const attendance = await prisma.eventAttendance.create({
+      data: {
+        Event: { connect: { eventID: data.orgID } },
+        Person: { connect: { personID: person.personID } },
+      },
+    });
+
+    console.log(attendance);
 
     return NextResponse.json({ data, message: "Success" }, { status: 200 });
   } catch (error) {

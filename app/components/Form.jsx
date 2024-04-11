@@ -80,7 +80,7 @@ export default function Form({ orgID, orgName }) {
           <div id="netid-message" className=""></div>
           <form onSubmit={handleSubmit}>
             <label htmlFor="netid" className="block mb-2">
-              Net ID:
+              BYU Net ID:
             </label>
             <input
               id="netid"
