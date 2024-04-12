@@ -2,9 +2,9 @@ import { NextResponse } from "next/server";
 import prisma from "../../lib/db";
 
 export async function POST(request) {
-  console.log("POST request made (create attendance)");
+  //console.log("POST request made (create attendance)");
   const res = await request.json();
-  console.log(res);
+  //console.log(res);
   try {
     const data = {
       firstName: res.FirstName,
@@ -15,7 +15,6 @@ export async function POST(request) {
 
     const timeAttended = new Date();
 
-    console.log(data);
     const attendance = await prisma.eventAttendance.create({
       data: {
         Event: { connect: { eventID: data.orgID } },
@@ -23,7 +22,7 @@ export async function POST(request) {
       },
     });
 
-    console.log(attendance);
+    //console.log(attendance);
 
     return NextResponse.json({ data, message: "Success" }, { status: 200 });
   } catch (error) {

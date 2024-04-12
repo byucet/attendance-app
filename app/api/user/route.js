@@ -28,14 +28,14 @@ export async function POST(request) {
       },
     });
 
-    console.log("Person created:", person);
+    //console.log("Person created:", person);
     const student = await prisma.student.create({
       data: {
         Person: { connect: { personID: person.personID } },
       },
     });
 
-    console.log("Student created:", student);
+    //console.log("Student created:", student);
 
     const attendance = await prisma.eventAttendance.create({
       data: {
@@ -44,7 +44,7 @@ export async function POST(request) {
       },
     });
 
-    console.log(attendance);
+    //console.log(attendance);
 
     return NextResponse.json({ data, message: "Success" }, { status: 200 });
   } catch (error) {
