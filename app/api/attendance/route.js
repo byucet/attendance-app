@@ -10,14 +10,13 @@ export async function POST(request) {
       firstName: res.FirstName,
       personID: res.personID,
       NetID: res.netid,
-      orgID: Number(res.orgID) * 100,
+      eventID: Number(res.eventID) /* * 100 */,
     };
 
     const timeAttended = new Date();
-
     const attendance = await prisma.eventAttendance.create({
       data: {
-        Event: { connect: { eventID: data.orgID } },
+        Event: { connect: { eventID: data.eventID } },
         Person: { connect: { personID: data.personID } },
       },
     });

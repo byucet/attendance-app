@@ -17,7 +17,7 @@ export async function POST(request) {
       firstName: res.firstName,
       lastName: res.lastName,
       netid: res.netid,
-      orgID: Number(res.orgID) * 100,
+      eventID: Number(res.eventID),
     };
 
     const person = await prisma.person.create({
@@ -39,7 +39,7 @@ export async function POST(request) {
 
     const attendance = await prisma.eventAttendance.create({
       data: {
-        Event: { connect: { eventID: data.orgID } },
+        Event: { connect: { eventID: data.eventID } },
         Person: { connect: { personID: person.personID } },
       },
     });

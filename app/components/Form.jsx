@@ -3,10 +3,11 @@ import { useRef, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
-export default function Form({ orgID, orgName }) {
+export default function Form({ eventID, eventName }) {
   const netidRef = useRef(null);
   const router = useRouter();
   const [warning, setWarning] = useState(false);
+  console.log("comp./form",eventID, eventName)
 
   useEffect(() => {
     // check if user is already in local storage
@@ -32,7 +33,7 @@ export default function Form({ orgID, orgName }) {
       // if user is in database, create attendance, add to local
       if (response.ok) {
         const { personID, FirstName } = data.message;
-        const body = { personID, FirstName, netid, orgID };
+        const body = { personID, FirstName, netid, eventID };
 
         await fetch(`/api/attendance`, {
           method: "POST",
@@ -60,7 +61,7 @@ export default function Form({ orgID, orgName }) {
   return (
     <>
       <div className="h-full flex flex-col justify-center items-center">
-        <h1 className="text-3xl font-bold">{orgName} Event!</h1>
+        <h1 className="text-3xl font-bold">{eventName}!</h1>
         {!warning ? (
           <div className="text-info my-4">
             Thanks for joining us! Please enter your information below.
@@ -109,7 +110,7 @@ export default function Form({ orgID, orgName }) {
             First time attending a Rollins Center event?{" "}
             <Link
               className="text-teal-500 cursor-pointer"
-              href={`/program/${orgID}/signup`}
+              href={`/program/${eventID}/signup`}
             >
               Register
             </Link>{" "}

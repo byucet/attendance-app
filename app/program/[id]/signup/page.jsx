@@ -7,7 +7,7 @@ export default function Page({ params }) {
   const netidRef = useRef(null);
   const firstNameRef = useRef(null);
   const lastNameRef = useRef(null);
-  const orgID = params.id;
+  const eventID = params.id;
   const router = useRouter();
 
   async function handleSubmit(event) {
@@ -18,7 +18,7 @@ export default function Page({ params }) {
         firstName: firstNameRef.current.value,
         lastName: lastNameRef.current.value,
         netid: netidRef.current.value,
-        orgID: orgID,
+        eventID: eventID,
       };
 
       await fetch(`/api/user`, {
@@ -93,7 +93,7 @@ export default function Page({ params }) {
             </button>
             <Link
               className="my-2 block text-center bg-gray-400 w-1/3 text-white py-3 px-4 rounded-3xl"
-              href={`/program/${orgID}`}
+              href={`/program/${eventID}`}
             >
               Go Back
             </Link>{" "}

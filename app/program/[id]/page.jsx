@@ -4,13 +4,12 @@ import prisma from "../../lib/db";
 
 export default async function Page({ params }) {
   const { id } = params;
-  const program = await prisma.organization.findUnique({
+  const program = await prisma.event.findUnique({
     where: {
-      orgID: parseInt(id),
+      eventID: parseInt(id),
     },
   });
-
   if (!program) notFound();
 
-  return <Form {...program} />;
+  return <Form eventID={program.eventID} eventName={program.EventName}/>;
 }
