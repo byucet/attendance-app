@@ -49,7 +49,7 @@ export default function Home() {
             href={`program/500`}
             className="bg-slate-500 text-white px-4 py-3 rounded-md"
           >
-            Seed Launchpad - Bright Bulding
+            Seed Launchpad - Bright Building
           </Link>
 
           <Link
@@ -57,6 +57,13 @@ export default function Home() {
             className="bg-slate-500 text-white px-4 py-3 rounded-md"
           >
             Seed Launchpad - TNRB
+          </Link>
+
+          <Link
+            href={`program/502`}
+            className="bg-slate-500 text-white px-4 py-3 rounded-md"
+          >
+            Seed Launchpad - SCOB
           </Link>
 
           <Link
