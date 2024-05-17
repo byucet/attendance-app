@@ -4,10 +4,10 @@ import prisma from "./lib/db";
 export default function Home() {
   return (
     <>
-      <div className="h-full flex flex-col justify-start md:justify-center items-center">
-        <h1 className="text-3xl font-bold w-2/3">Welcome to our Event!</h1>
+      <div className="h-full flex flex-col justify-start md:justify-center items-center relative">
+        <h1 className="text-3xl font-bold w-2/3">Welcome to The Rollins Center Events!</h1>
         <span className="text-slate-700 py-2 w-2/3">
-          Click on your event sponsor to check in!
+          Click on your event to check in!
         </span>
         <div className="mt-4 w-2/3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <Link
@@ -73,6 +73,13 @@ export default function Home() {
             Graduate Entrepreneurship Association
           </Link>
         </div>
+
+        <Link
+          href={`/attendance`}
+          className="bg-teal-700 text-white px-4 py-3 rounded-md absolute top-4 right-4"
+        >
+          View Attendance
+        </Link>
       </div>
     </>
   );
