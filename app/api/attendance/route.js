@@ -32,3 +32,38 @@ export async function POST(request) {
     );
   }
 }
+
+export async function GET(request) {
+  const { searchParams } = new URL(request.url);
+  const eventId = searchParams.get('eventId');
+  const date = searchParams.get('date');
+
+  try {
+    const attendance = await prisma.eventAttendance.findMany({
+      where: {
+        eventId: Number(eventId),
+        TimeAttended: {
+          gte: new Date(date).toISOString(),
+          lt: new Date(new Date(date).setDate(new Date(date).getDate() + 1)).toISOString()
+        }
+      },
+      include: {
+        Person: {
+          select: {
+            FirstName: true,
+            LastName: true,
+            NetID: true
+          }
+        }
+      },
+      orderBy: {
+        TimeAttended: 'desc' // Order by TimeAttended in descending order
+      }
+    });
+
+    return NextResponse.json(attendance);
+  } catch (error) {
+    console.error('Error fetching attendance:', error);
+    return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
+  }
+}
