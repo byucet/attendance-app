@@ -189,8 +189,6 @@ const AttendancePage = () => {
                 </thead>
                 <tbody>
                   {attendance.map((entry) => {
-                    // console.log('entry:', entry); // Log to inspect the entire entry object
-                    // console.log('entry.Person:', entry.Person); // Log to inspect the Person object
                     return (
                       <tr key={`${entry.eventId}-${entry.personID}-${entry.TimeAttended}`} className="border-t">
                         <td className="py-2 px-4 border">
