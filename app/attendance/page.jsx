@@ -126,8 +126,10 @@ const AttendancePage = () => {
 
   // Update attendance state when new data is fetched
   useEffect(() => {
+    // console.log('data',data);
     if (data) {
       setAttendance(data);
+      // console.log(data);
     } else if (!isValidating) {
       setAttendance([]);
     }
@@ -186,15 +188,19 @@ const AttendancePage = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {attendance.map((entry) => (
-                    <tr key={`${entry.eventId}-${entry.personID}-${entry.TimeAttended}`} className="border-t">
-                      <td className="py-2 px-4 border">
-                        {entry.Person.FirstName} {entry.Person.LastName}
-                      </td>
-                      <td className="py-2 px-4 border">{entry.Person.NetID}</td>
-                      <td className="py-2 px-4 border">{new Date(entry.TimeAttended).toLocaleString()}</td>
-                    </tr>
-                  ))}
+                  {attendance.map((entry) => {
+                    console.log('entry:', entry); // Log to inspect the entire entry object
+                    console.log('entry.Person:', entry.Person); // Log to inspect the Person object
+                    return (
+                      <tr key={`${entry.eventId}-${entry.personID}-${entry.TimeAttended}`} className="border-t">
+                        <td className="py-2 px-4 border">
+                          {entry.Person.firstName} {entry.Person.lastName}
+                        </td>
+                        <td className="py-2 px-4 border">{entry.Person.netId}</td>
+                        <td className="py-2 px-4 border">{new Date(entry.TimeAttended).toLocaleString()}</td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>

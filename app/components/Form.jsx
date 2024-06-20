@@ -29,12 +29,12 @@ export default function Form({ eventID, eventName }) {
       // see if user is in database
       const response = await fetch(`/api/user/${netid}`);
       const data = await response.json();
-
+      console.log('data', data);
       // if user is in database, create attendance, add to local
       if (response.ok) {
-        const { personID, FirstName } = data.message;
-        const body = { personID, FirstName, netid, eventID };
-
+        const { id, firstName } = data.message;
+        const body = { id, firstName, netid, eventID };
+        console.log('Body',body);
         await fetch(`/api/attendance`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },

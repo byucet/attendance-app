@@ -7,17 +7,18 @@ export async function POST(request) {
   //console.log(res);
   try {
     const data = {
-      firstName: res.FirstName,
-      personID: res.personID,
+      firstName: res.firstName,
+      personID: res.id,
       NetID: res.netid,
       eventID: Number(res.eventID) /* * 100 */,
     };
-
+    console.log('Atteendance-Checkpoint1');
+    console.log('Data',data);
     const timeAttended = new Date();
     const attendance = await prisma.eventAttendance.create({
       data: {
         Event: { connect: { eventID: data.eventID } },
-        Person: { connect: { personID: data.personID } },
+        Person: { connect: { id: data.personID } },
       },
     });
 
@@ -50,9 +51,9 @@ export async function GET(request) {
       include: {
         Person: {
           select: {
-            FirstName: true,
-            LastName: true,
-            NetID: true
+            firstName: true,
+            lastName: true,
+            netId: true
           }
         }
       },

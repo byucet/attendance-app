@@ -9,13 +9,13 @@ datasource db {
 }
 
 model Event {
-  eventID          Int       @id @default(autoincrement())
-  EventName        String?   @db.VarChar(100)
-  DateStart        DateTime? @db.DateTime(0)
-  DateEnd          DateTime? @db.DateTime(0)
-  EventType        String?   @db.VarChar(20)
+  eventID          Int               @id @default(autoincrement())
+  EventName        String?           @db.VarChar(100)
+  DateStart        DateTime?         @db.DateTime(0)
+  DateEnd          DateTime?         @db.DateTime(0)
+  EventType        String?           @db.VarChar(20)
   recurringEventID Int?
-  attendees EventAttendance[]
+  attendees        EventAttendance[]
 }
 
 model EventAttendance {
@@ -23,23 +23,16 @@ model EventAttendance {
   personID     Int
   TimeAttended DateTime @default(now())
   Notes        String?  @db.VarChar(500)
-  Event   Event   @relation(fields: [eventId], references: [eventID])
-  Person  Person  @relation(fields: [personID], references: [personID])
+  Event        Event    @relation(fields: [eventId], references: [eventID])
+  Person       Person   @relation(fields: [personID], references: [id], onDelete: NoAction)
 
   @@id([eventId, personID, TimeAttended])
-}
-
-model GrantHistory {
-  grantID     Int       @id @default(autoincrement())
-  teamId      Int
-  AwardAmount Int?
-  GrantType   String?   @db.VarChar(50)
-  DateAwarded DateTime? @db.DateTime(0)
+  @@index([personID], map: "EventAttendance_personID_fkey")
 }
 
 model Major {
-  majorID   Int     @id @default(autoincrement())
-  MajorName String? @unique(map: "MajorName") @db.VarChar(130)
+  id        Int    @id @default(autoincrement())
+  majorName String @unique @db.VarChar(130)
 }
 
 model Mentor {
@@ -53,12 +46,12 @@ model Mentor {
 }
 
 model MentorUpdate {
-  mentorUpdateID Int         @id @default(autoincrement())
+  mentorUpdateID Int             @id @default(autoincrement())
   TeamHealth     Int?
-  Notes          String?     @db.VarChar(500)
+  Notes          String?         @db.VarChar(500)
   personID       Int?
   teamID         Int?
-  TeamMentor     TeamMentor? @relation(fields: [personID, teamID], references: [personID, teamID], onDelete: NoAction, onUpdate: NoAction, map: "teamMentor_FK")
+  TeamMentor     OLD_TeamMentor? @relation(fields: [personID, teamID], references: [personID, teamID], onDelete: NoAction, onUpdate: NoAction, map: "teamMentor_FK")
 
   @@index([personID, teamID], map: "teamMentor_FK")
 }
@@ -102,22 +95,21 @@ model OrganizationEventLink {
 }
 
 model Person {
-  personID      Int          @id @default(autoincrement())
-  FirstName     String?      @db.VarChar(50)
-  LastName      String?      @db.VarChar(50)
-  PreferredName String?      @db.VarChar(255)
-  NetID         String?      @unique @db.VarChar(20)
-  Gender        String?      @db.VarChar(32)
-  Email         String?      @db.VarChar(100)
-  Phone         String?      @db.VarChar(14)
-  Ethnicity     String?      @db.VarChar(255)
-  City          String?      @db.VarChar(50)
-  State         String?      @db.Char(20)
-  Country       String?      @db.Char(10)
-  LinkedInURL   String?      @db.VarChar(200)
-  Student       Student?
-  temp_grant    temp_grant[]
+  id              Int               @id @default(autoincrement())
+  firstName       String?           @db.VarChar(50)
+  lastName        String?           @db.VarChar(50)
+  city            String?           @db.VarChar(50)
+  state           String?           @db.Char(20)
+  country         String?           @db.Char(10)
+  phone           String?           @db.VarChar(14)
+  email           String?           @db.VarChar(100)
+  linkedInUrl     String?           @db.VarChar(200)
+  netId           String?           @unique @db.VarChar(20)
+  needsUpdate     Boolean?
+  preferredName   String?           @db.VarChar(255)
+  gender          Person_gender?
   EventAttendance EventAttendance[]
+  Student         Student[]
 }
 
 model RecurringEvent {
@@ -127,25 +119,28 @@ model RecurringEvent {
 }
 
 model Student {
-  personID         Int     @id
-  NetID            String? @unique(map: "NetID") @db.VarChar(20)
-  UniversityID     Int?    @unique(map: "ByuID")
-  ClassStanding    String? @db.VarChar(20)
-  College          String? @db.VarChar(150)
-  GraduationYear   Int?
-  Major            String? @db.VarChar(255)
-  ExpectedGradYear Int?
-  EventTerm        String? @db.VarChar(255)
-  UniversityEmail  String? @db.VarChar(255)
-  Person           Person  @relation(fields: [personID], references: [personID], onDelete: NoAction, onUpdate: NoAction, map: "Student_ibfk_1")
+  id             Int             @id @default(autoincrement())
+  netId          String?         @unique @db.VarChar(20)
+  classStanding  String?         @db.VarChar(20)
+  ethnicity      String?         @db.VarChar(50)
+  college        String?         @db.VarChar(150)
+  graduationYear Int?
+  gender         Student_gender?
+  userId         Int?
+  personId       Int?
+  universityID   Int?
+  Person         Person?         @relation(fields: [personId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "Student_person___fk")
+
+  @@index([personId], map: "Student_person___fk")
 }
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model StudentMajorsHistory {
-  majorID   Int
-  personID  Int
-  DateStart DateTime? @db.Date
-  DateEnd   DateTime? @db.Date
+  id        Int       @id @default(autoincrement())
+  dateStart DateTime? @db.Date
+  dateEnd   DateTime? @db.Date
+  majorId   Int
+  studentId Int
 
   @@ignore
 }
@@ -156,29 +151,6 @@ model TeamEventAttendance {
   TimeAttended DateTime? @db.DateTime(0)
 
   @@id([eventId, teamID])
-}
-
-model TeamMembership {
-  personID   Int
-  teamID     Int
-  DateJoined DateTime? @db.DateTime(0)
-  DateLeft   DateTime? @db.DateTime(0)
-  Role       String?   @db.VarChar(100)
-  CoFounder  Boolean?  @db.Bit(1)
-  Notes      String?   @db.VarChar(300)
-  id         Int?
-
-  @@id([personID, teamID])
-}
-
-model TeamMentor {
-  personID     Int
-  teamID       Int
-  StartDate    DateTime?      @db.Date
-  EndDate      DateTime?      @db.Date
-  MentorUpdate MentorUpdate[]
-
-  @@id([personID, teamID])
 }
 
 model TeamUpdate {
@@ -324,43 +296,6 @@ model django_session {
   @@index([expire_date], map: "django_session_expire_date_a5c62663")
 }
 
-model team {
-  teamID          Int       @id @default(autoincrement())
-  TeamName        String?   @db.VarChar(200)
-  CompanyCategory String?   @db.VarChar(100)
-  CompanyIndustry String?   @db.VarChar(100)
-  Model           String?   @db.VarChar(20)
-  WebsiteURL      String?   @db.VarChar(300)
-  DateFounded     DateTime? @db.DateTime(0)
-  DateEnded       DateTime? @db.DateTime(0)
-  Description     String?   @db.VarChar(400)
-  IsPublic        Boolean?  @db.Bit(1)
-  Stage           String?   @db.VarChar(100)
-  CurrentMetricID Int?
-  LinkedInURL     String?   @db.VarChar(500)
-  Logo            String?   @db.VarChar(255)
-  created_by      String    @db.VarChar(20)
-  created_at      DateTime  @default(now()) @db.DateTime(0)
-  updated_at      DateTime? @db.DateTime(0)
-}
-
-model temp_grant {
-  ContactName      String?   @db.VarChar(150)
-  ContactEmail     String?   @db.VarChar(100)
-  CompanyName      String?   @db.VarChar(255)
-  ContactPhone     String?   @db.VarChar(14)
-  ApprovalAmount   Decimal?  @db.Decimal(10, 2)
-  GrantDate        DateTime? @db.Date
-  grantID          Int       @id @default(autoincrement())
-  teamId           Int?      @default(0)
-  contactId        Int?
-  ContactFirstName String?   @db.VarChar(255)
-  ContactLastName  String?   @db.VarChar(255)
-  Person           Person?   @relation(fields: [contactId], references: [personID], onDelete: NoAction, onUpdate: NoAction, map: "fk_contactId")
-
-  @@index([contactId], map: "fk_contactId")
-}
-
 model temp_person {
   personID      Int     @id @default(autoincrement())
   FirstName     String? @db.VarChar(50)
@@ -388,4 +323,308 @@ model temp_student {
   ExpectedGradYear Int?
   EventTerm        String? @db.VarChar(255)
   UniversityEmail  String? @db.VarChar(255)
+}
+
+model Business {
+  id              Int                     @id @default(autoincrement())
+  businessName    String?                 @db.VarChar(200)
+  companyCategory String?                 @db.VarChar(100)
+  companyIndustry String?                 @db.VarChar(100)
+  model           String?                 @db.VarChar(20)
+  websiteURL      String?                 @db.VarChar(300)
+  dateFounded     DateTime?               @db.DateTime(0)
+  dateEnded       DateTime?               @db.DateTime(0)
+  description     String?                 @db.LongText
+  isPublic        Boolean?                @db.Bit(1)
+  stage           String?                 @db.VarChar(100)
+  currentMetricId Int?
+  linkedInUrl     String?                 @db.VarChar(500)
+  logo            String?                 @db.VarChar(255)
+  businessStatus  Business_businessStatus @default(ACTIVE)
+  activityLogs    Json
+  createdById     Int
+  createdAt       DateTime                @default(now()) @db.DateTime(0)
+  updatedAt       DateTime
+}
+
+model BusinessMember {
+  id               Int                             @id @default(autoincrement())
+  userId           Int
+  businessId       Int
+  firstName        String?                         @db.VarChar(50)
+  lastName         String?                         @db.VarChar(50)
+  role             BusinessMember_role
+  primaryContact   Boolean                         @default(false)
+  ownership        Float?
+  notes            String?                         @db.VarChar(300)
+  dateLeft         DateTime?                       @db.DateTime(0)
+  dateJoined       DateTime?                       @db.DateTime(0)
+  membershipStatus BusinessMember_membershipStatus @default(ACTIVE)
+  invitedById      Int?
+  activityLogs     Json
+  createdAt        DateTime                        @default(now()) @db.DateTime(0)
+  updatedAt        DateTime
+
+  @@unique([businessId, userId, membershipStatus])
+}
+
+model Funding {
+  id               Int      @id @default(autoincrement())
+  contactName      String   @db.VarChar(150)
+  contactEmail     String   @db.VarChar(100)
+  contactPhone     String   @db.VarChar(14)
+  companyName      String   @db.VarChar(255)
+  approvedAmount   Float
+  approvedDatetime DateTime @db.DateTime(0)
+  grantRequestId   Int
+  businessId       Int
+  contactId        Int
+  approvedById     Int
+  activityLogs     Json
+  createdAt        DateTime @default(now()) @db.DateTime(0)
+  updatedAt        DateTime
+}
+
+model GrantApplication {
+  id                Int                                @id @default(autoincrement())
+  name              String                             @db.VarChar(255)
+  description       String                             @db.LongText
+  grantTypeId       Int
+  formId            Int
+  startDate         DateTime                           @db.Date
+  endDate           DateTime?                          @db.Date
+  applicationStatus GrantApplication_applicationStatus @default(ACTIVE)
+  createdById       Int
+  createdAt         DateTime                           @default(now()) @db.DateTime(0)
+  updatedAt         DateTime
+}
+
+model GrantRequest {
+  id                 Int                            @id @default(autoincrement())
+  businessId         Int
+  submissionId       Int                            @unique
+  grantApplicationId Int
+  reviewStageId      Int?
+  applicationStatus  GrantRequest_applicationStatus @default(SUBMITTED)
+  submittedById      Int
+  activityLogs       Json
+  createdAt          DateTime                       @default(now()) @db.DateTime(0)
+  updatedAt          DateTime                       @db.DateTime(0)
+}
+
+model GrantType {
+  id        Int              @id @default(autoincrement())
+  name      String           @unique
+  status    GrantType_status @default(ACTIVE)
+  createdAt DateTime         @default(now()) @db.DateTime(0)
+  updatedAt DateTime
+}
+
+model OLD_GrantHistory {
+  grantID     Int       @id @default(autoincrement())
+  teamId      Int
+  AwardAmount Int?
+  GrantType   String?   @db.VarChar(50)
+  DateAwarded DateTime? @db.DateTime(0)
+}
+
+model OLD_Major {
+  majorID   Int     @id @default(autoincrement())
+  MajorName String? @unique(map: "MajorName") @db.VarChar(130)
+}
+
+model OLD_Person {
+  personID       Int              @id @default(autoincrement())
+  FirstName      String?          @db.VarChar(50)
+  LastName       String?          @db.VarChar(50)
+  PreferredName  String?          @db.VarChar(255)
+  NetID          String?          @unique(map: "Person_NetID_key") @db.VarChar(20)
+  Gender         String?          @db.VarChar(32)
+  Email          String?          @db.VarChar(100)
+  Phone          String?          @db.VarChar(14)
+  Ethnicity      String?          @db.VarChar(255)
+  City           String?          @db.VarChar(50)
+  State          String?          @db.Char(20)
+  Country        String?          @db.Char(10)
+  LinkedInURL    String?          @db.VarChar(200)
+  needsUpdate    Boolean?
+  OLD_Student    OLD_Student?
+  OLD_temp_grant OLD_temp_grant[]
+}
+
+model OLD_Student {
+  personID         Int        @id
+  NetID            String?    @unique(map: "NetID") @db.VarChar(20)
+  UniversityID     Int?       @unique(map: "ByuID")
+  ClassStanding    String?    @db.VarChar(20)
+  College          String?    @db.VarChar(150)
+  GraduationYear   Int?
+  Major            String?    @db.VarChar(255)
+  ExpectedGradYear Int?
+  EventTerm        String?    @db.VarChar(255)
+  UniversityEmail  String?    @db.VarChar(255)
+  OLD_Person       OLD_Person @relation(fields: [personID], references: [personID], onDelete: NoAction, onUpdate: NoAction, map: "OLD_Student_ibfk_1")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model OLD_StudentMajorsHistory {
+  majorID   Int
+  personID  Int
+  DateStart DateTime? @db.Date
+  DateEnd   DateTime? @db.Date
+
+  @@ignore
+}
+
+model OLD_TeamMembership {
+  personID   Int
+  teamID     Int
+  DateJoined DateTime? @db.DateTime(0)
+  DateLeft   DateTime? @db.DateTime(0)
+  Role       String?   @db.VarChar(100)
+  CoFounder  Boolean?  @db.Bit(1)
+  Notes      String?   @db.VarChar(300)
+  id         Int?
+
+  @@id([personID, teamID])
+}
+
+model OLD_TeamMentor {
+  personID     Int
+  teamID       Int
+  StartDate    DateTime?      @db.Date
+  EndDate      DateTime?      @db.Date
+  MentorUpdate MentorUpdate[]
+
+  @@id([personID, teamID])
+}
+
+model OLD_team {
+  teamID          Int       @id @default(autoincrement())
+  TeamName        String?   @db.VarChar(200)
+  CompanyCategory String?   @db.VarChar(100)
+  CompanyIndustry String?   @db.VarChar(100)
+  Model           String?   @db.VarChar(20)
+  WebsiteURL      String?   @db.VarChar(300)
+  DateFounded     DateTime? @db.DateTime(0)
+  DateEnded       DateTime? @db.DateTime(0)
+  Description     String?   @db.VarChar(400)
+  IsPublic        Boolean?  @db.Bit(1)
+  Stage           String?   @db.VarChar(100)
+  CurrentMetricID Int?
+  LinkedInURL     String?   @db.VarChar(500)
+  Logo            String?   @db.VarChar(255)
+  created_by      String    @db.VarChar(20)
+  created_at      DateTime  @default(now()) @db.DateTime(0)
+  updated_at      DateTime? @db.DateTime(0)
+}
+
+model OLD_temp_grant {
+  ContactName      String?     @db.VarChar(150)
+  ContactEmail     String?     @db.VarChar(100)
+  CompanyName      String?     @db.VarChar(255)
+  ContactPhone     String?     @db.VarChar(14)
+  ApprovalAmount   Decimal?    @db.Decimal(10, 2)
+  GrantDate        DateTime?   @db.Date
+  grantID          Int         @id @default(autoincrement())
+  teamId           Int?        @default(0)
+  contactId        Int?
+  ContactFirstName String?     @db.VarChar(255)
+  ContactLastName  String?     @db.VarChar(255)
+  OLD_Person       OLD_Person? @relation(fields: [contactId], references: [personID], onDelete: NoAction, onUpdate: NoAction, map: "fk_contactId")
+
+  @@index([contactId], map: "fk_contactId")
+}
+
+model User {
+  id             Int                @id @default(autoincrement())
+  firstName      String             @db.VarChar(50)
+  lastName       String             @db.VarChar(50)
+  email          String?            @db.VarChar(100)
+  byuEmail       String?            @db.VarChar(100)
+  phone          String?            @db.VarChar(14)
+  password       String             @db.VarChar(100)
+  photoUrl       String?            @db.VarChar(200)
+  address        String?            @db.VarChar(200)
+  linkedInUrl    String?            @db.VarChar(200)
+  preferredName  String?            @db.VarChar(255)
+  byuVerified    Boolean            @default(dbgenerated("b'0'")) @db.Bit(1)
+  emailVerified  Boolean            @default(dbgenerated("b'0'")) @db.Bit(1)
+  userType       User_userType      @default(USER)
+  accountStatus  User_accountStatus @default(NON_VERIFIED)
+  personId       Int?
+  accountLogs    Json
+  lastAccessDate DateTime?          @db.DateTime(0)
+  createdAt      DateTime           @default(now()) @db.DateTime(0)
+  updatedAt      DateTime           @default(now())
+
+  @@unique([email, accountStatus])
+}
+
+enum GrantType_status {
+  ACTIVE
+  INACTIVE
+}
+
+enum BusinessMember_role {
+  FOUNDER
+  COFOUNDER
+  EMPLOYEE
+  INTERN
+  MENTOR
+}
+
+enum GrantRequest_applicationStatus {
+  SUBMITTED
+  REJECTED
+  CANCELLED
+  REVIEW
+  PENDING
+  FEEDBACK
+  ACCEPTED
+}
+
+enum Student_gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum GrantApplication_applicationStatus {
+  ACTIVE
+  INACTIVE
+  EXPIRED
+}
+
+enum BusinessMember_membershipStatus {
+  ACTIVE
+  LEFT
+  DEACTIVATED
+  SOFT_DELETED
+}
+
+enum Person_gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum User_userType {
+  USER
+  MENTOR
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum Business_businessStatus {
+  ACTIVE
+  DEACTIVATED
+  SOFT_DELETED
+}
+
+enum User_accountStatus {
+  NON_VERIFIED
+  VERIFIED
+  DEACTIVATED
+  SOFT_DELETED
 }

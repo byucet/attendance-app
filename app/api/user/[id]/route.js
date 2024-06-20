@@ -14,7 +14,7 @@ export async function GET(request, { params }) {
     // Fetch user from database
     const user = await prisma.person.findUnique({
       where: {
-        NetID: netid,
+        netId: netid,
       },
     });
 

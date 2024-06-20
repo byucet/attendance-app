@@ -16,22 +16,24 @@ export async function POST(request) {
     const data = {
       firstName: res.firstName,
       lastName: res.lastName,
-      netid: res.netid,
+      netId: res.netid,
       eventID: Number(res.eventID),
     };
 
     const person = await prisma.person.create({
       data: {
-        FirstName: data.firstName,
-        LastName: data.lastName,
-        NetID: data.netid,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        netId: data.netId,
       },
     });
 
     //console.log("Person created:", person);
+
     const student = await prisma.student.create({
       data: {
-        Person: { connect: { personID: person.personID } },
+        Person: { connect: { id: person.id, } },
+        netId: data.netId,
       },
     });
 
@@ -40,7 +42,7 @@ export async function POST(request) {
     const attendance = await prisma.eventAttendance.create({
       data: {
         Event: { connect: { eventID: data.eventID } },
-        Person: { connect: { personID: person.personID } },
+        Person: { connect: { id: person.id } },
       },
     });
 
