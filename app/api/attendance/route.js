@@ -34,18 +34,54 @@ export async function POST(request) {
   }
 }
 
+// export async function GET(request) {
+//   const { searchParams } = new URL(request.url);
+//   const eventId = searchParams.get('eventId');
+//   const date = searchParams.get('date');
+
+//   try {
+//     const attendance = await prisma.eventAttendance.findMany({
+//       where: {
+//         eventId: Number(eventId),
+//         TimeAttended: {
+//           gte: new Date(date).toISOString(),
+//           lt: new Date(new Date(date).setDate(new Date(date).getDate() + 1)).toISOString()
+//         }
+//       },
+//       include: {
+//         Person: {
+//           select: {
+//             firstName: true,
+//             lastName: true,
+//             netId: true
+//           }
+//         }
+//       },
+//       orderBy: {
+//         TimeAttended: 'desc' // Order by TimeAttended in descending order
+//       }
+//     });
+
+//     return NextResponse.json(attendance);
+//   } catch (error) {
+//     console.error('Error fetching attendance:', error);
+//     return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
+//   }
+// }
+
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const eventId = searchParams.get('eventId');
-  const date = searchParams.get('date');
+  const startDate = searchParams.get('startDate');
+  const endDate = searchParams.get('endDate');
 
   try {
     const attendance = await prisma.eventAttendance.findMany({
       where: {
         eventId: Number(eventId),
         TimeAttended: {
-          gte: new Date(date).toISOString(),
-          lt: new Date(new Date(date).setDate(new Date(date).getDate() + 1)).toISOString()
+          gte: new Date(startDate).toISOString(),
+          lt: new Date(new Date(endDate).setDate(new Date(endDate).getDate() + 1)).toISOString()
         }
       },
       include: {

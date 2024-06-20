@@ -1,6 +1,9 @@
-// "use client";
 
+
+// "use client";
+// // import { useRouter } from 'next/router';
 // import useSWR from 'swr';
+// import Link from "next/link";
 // import { useState, useEffect } from 'react';
 // import { EventSelector, DateSelector } from '../components/EventSelector'; // Adjust path if necessary
 // import PasswordForm from '../components/PasswordForm'; // Adjust path if necessary
@@ -8,12 +11,13 @@
 // const fetcher = (url) => fetch(url).then((res) => res.json());
 
 // const AttendancePage = () => {
+//   // const router = useRouter();
 //   const [authenticated, setAuthenticated] = useState(false);
 //   const [selectedEventId, setSelectedEventId] = useState(null);
 //   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]); // Default to today's date
 //   const [attendance, setAttendance] = useState(null); // Initialize with null
 
-//   const { data, error, mutate } = useSWR(
+//   const { data, error, isValidating } = useSWR(
 //     selectedEventId && selectedDate
 //       ? `/api/attendance?eventId=${selectedEventId}&date=${selectedDate}`
 //       : null,
@@ -23,12 +27,14 @@
 
 //   // Update attendance state when new data is fetched
 //   useEffect(() => {
+//     // console.log('data',data);
 //     if (data) {
 //       setAttendance(data);
-//     } else {
+//       // console.log(data);
+//     } else if (!isValidating) {
 //       setAttendance([]);
 //     }
-//   }, [data]);
+//   }, [data, isValidating]);
 
 //   // Clear attendance data when event or date changes
 //   useEffect(() => {
@@ -59,6 +65,12 @@
 
 //   return (
 //     <div className="p-4">
+//       <Link
+//             href={`/ `}
+//             className="bg-teal-900 text-white px-4 py-3 rounded-md"
+//           >
+//             Back
+//           </Link>
 //       <h1 className="text-2xl font-bold mb-4 text-center">Attendance List</h1>
 //       <EventSelector onEventChange={setSelectedEventId} />
 //       <DateSelector selectedDate={selectedDate} onDateChange={setSelectedDate} />
@@ -72,18 +84,22 @@
 //                 <thead className="sticky top-0 bg-white shadow">
 //                   <tr>
 //                     <th className="py-2 px-4 border text-center">Name</th>
+//                     <th className="py-2 px-4 border text-center">NetID</th>
 //                     <th className="py-2 px-4 border text-center">Time Attended</th>
 //                   </tr>
 //                 </thead>
 //                 <tbody>
-//                   {attendance.map((entry) => (
-//                     <tr key={`${entry.eventId}-${entry.personID}-${entry.TimeAttended}`} className="border-t">
-//                       <td className="py-2 px-4 border">
-//                         {entry.Person.FirstName} {entry.Person.LastName}
-//                       </td>
-//                       <td className="py-2 px-4 border">{new Date(entry.TimeAttended).toLocaleString()}</td>
-//                     </tr>
-//                   ))}
+//                   {attendance.map((entry) => {
+//                     return (
+//                       <tr key={`${entry.eventId}-${entry.personID}-${entry.TimeAttended}`} className="border-t">
+//                         <td className="py-2 px-4 border">
+//                           {entry.Person.firstName} {entry.Person.lastName}
+//                         </td>
+//                         <td className="py-2 px-4 border">{entry.Person.netId}</td>
+//                         <td className="py-2 px-4 border">{new Date(entry.TimeAttended).toLocaleString()}</td>
+//                       </tr>
+//                     );
+//                   })}
 //                 </tbody>
 //               </table>
 //             </div>
@@ -100,45 +116,39 @@
 // export default AttendancePage;
 
 "use client";
-// import { useRouter } from 'next/router';
 import useSWR from 'swr';
 import Link from "next/link";
 import { useState, useEffect } from 'react';
-import { EventSelector, DateSelector } from '../components/EventSelector'; // Adjust path if necessary
+import { EventSelector, DateRangeSelector } from '../components/EventSelector'; // Adjust path if necessary
 import PasswordForm from '../components/PasswordForm'; // Adjust path if necessary
 
 const fetcher = (url) => fetch(url).then((res) => res.json());
 
 const AttendancePage = () => {
-  // const router = useRouter();
   const [authenticated, setAuthenticated] = useState(false);
   const [selectedEventId, setSelectedEventId] = useState(null);
-  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]); // Default to today's date
-  const [attendance, setAttendance] = useState(null); // Initialize with null
+  const [dateRange, setDateRange] = useState({ startDate: new Date().toISOString().split('T')[0], endDate: new Date().toISOString().split('T')[0] });
+  const [attendance, setAttendance] = useState(null);
 
   const { data, error, isValidating } = useSWR(
-    selectedEventId && selectedDate
-      ? `/api/attendance?eventId=${selectedEventId}&date=${selectedDate}`
+    selectedEventId && dateRange.startDate && dateRange.endDate
+      ? `/api/attendance?eventId=${selectedEventId}&startDate=${dateRange.startDate}&endDate=${dateRange.endDate}`
       : null,
     fetcher,
-    { refreshInterval: 5000 } // Revalidate every 5 seconds
+    { refreshInterval: 5000 }
   );
 
-  // Update attendance state when new data is fetched
   useEffect(() => {
-    // console.log('data',data);
     if (data) {
       setAttendance(data);
-      // console.log(data);
     } else if (!isValidating) {
       setAttendance([]);
     }
   }, [data, isValidating]);
 
-  // Clear attendance data when event or date changes
   useEffect(() => {
-    setAttendance(null); // Set to null to trigger loading state
-  }, [selectedEventId, selectedDate]);
+    setAttendance(null);
+  }, [selectedEventId, dateRange]);
 
   const handlePasswordSubmit = async (password) => {
     const response = await fetch('/api/checkPassword', {
@@ -165,15 +175,15 @@ const AttendancePage = () => {
   return (
     <div className="p-4">
       <Link
-            href={`/ `}
-            className="bg-teal-900 text-white px-4 py-3 rounded-md"
-          >
-            Back
-          </Link>
+        href={`/ `}
+        className="bg-teal-900 text-white px-4 py-3 rounded-md"
+      >
+        Back
+      </Link>
       <h1 className="text-2xl font-bold mb-4 text-center">Attendance List</h1>
       <EventSelector onEventChange={setSelectedEventId} />
-      <DateSelector selectedDate={selectedDate} onDateChange={setSelectedDate} />
-      {selectedEventId && selectedDate && (
+      <DateRangeSelector dateRange={dateRange} onDateRangeChange={setDateRange} />
+      {selectedEventId && dateRange.startDate && dateRange.endDate && (
         <div className="overflow-x-auto mt-4">
           {attendance === null ? (
             <div>Loading...</div>
@@ -203,7 +213,7 @@ const AttendancePage = () => {
               </table>
             </div>
           ) : (
-            <p className="mt-4">No attendance records found for the selected date.</p>
+            <p className="mt-4">No attendance records found for the selected date range.</p>
           )}
           <p className="mt-4">Number of Attendances: {attendance ? attendance.length : 0}</p>
         </div>
